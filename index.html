@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f2e7">
+<title>测测你最适合什么职业 · 职业底色测试</title>
+<style>
+/* ============ 基础 ============ */
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --paper:#f7f2e7;
+  --paper-2:#fdfaf4;
+  --ink:#1d1a16;
+  --ink-soft:#4a443c;
+  --ink-mute:#7d7468;
+  --cinnabar:#b23a2e;
+  --cinnabar-deep:#8c2a21;
+  --gold:#b08a3e;
+  --jade:#4f6f63;
+  --line:rgba(29,26,22,.12);
+  --line-strong:rgba(29,26,22,.22);
+  --serif:"Songti SC","STSong","Noto Serif SC","Source Han Serif SC","SimSun",serif;
+  --sans:"PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans SC",sans-serif;
+}
+html{-webkit-text-size-adjust:100%}
+body{
+  min-height:100vh;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:
+    radial-gradient(620px 420px at 8% 4%,rgba(178,58,46,.07),transparent 68%),
+    radial-gradient(760px 520px at 94% 96%,rgba(79,111,99,.10),transparent 70%),
+    linear-gradient(180deg,#f6f0e3 0%,#efe6d4 100%);
+  background-attachment:fixed;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.5;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.055'/%3E%3C/svg%3E");
+}
+button{font-family:inherit;border:none;background:none;color:inherit;cursor:pointer}
+
+/* ============ 外框 ============ */
+.app{position:relative;z-index:1;max-width:560px;margin:0 auto;padding:26px 20px 56px}
+.brand{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.seal{
+  width:44px;height:44px;flex:0 0 auto;display:grid;place-items:center;
+  border:2px solid var(--cinnabar);border-radius:4px;color:var(--cinnabar);
+  font-family:var(--serif);font-size:23px;line-height:1;
+  transform:rotate(-4deg);background:rgba(178,58,46,.04);
+}
+.brand b{display:block;font-family:var(--serif);font-size:15px;letter-spacing:.2em;font-weight:600}
+.brand span{display:block;font-size:11px;letter-spacing:.16em;color:var(--ink-mute);margin-top:4px}
+
+/* ============ 页面切换 ============ */
+.page{display:none}
+.page.active{display:block;animation:pageIn .55s cubic-bezier(.22,1,.36,1) both}
+@keyframes pageIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+
+/* ============ 首页 ============ */
+.vertical-mark{
+  position:absolute;top:118px;right:-4px;writing-mode:vertical-rl;
+  font-family:var(--serif);font-size:13px;letter-spacing:.5em;color:var(--gold);opacity:.55;
+  display:none;pointer-events:none;
+}
+@media (min-width:620px){.vertical-mark{display:block}}
+#page-home{position:relative}
+@media (min-width:620px){
+  #page-quiz.active{display:flex;flex-direction:column;justify-content:center;min-height:62vh}
+}
+.hero{text-align:center;padding:26px 0 0}
+.kicker{font-family:var(--serif);font-size:12px;letter-spacing:.44em;text-indent:.44em;color:var(--gold)}
+.hero h1{
+  font-family:var(--serif);font-weight:600;font-size:clamp(34px,8vw,48px);
+  line-height:1.32;letter-spacing:.08em;margin:20px 0 18px;
+}
+.hero h1 em{font-style:normal;color:var(--cinnabar)}
+.lead{font-size:14.5px;line-height:2;color:var(--ink-soft);letter-spacing:.02em}
+.rule{display:flex;align-items:center;justify-content:center;gap:12px;margin:26px 0 14px;color:var(--gold)}
+.rule::before,.rule::after{content:"";height:1px;width:54px}
+.rule::before{background:linear-gradient(90deg,transparent,currentColor)}
+.rule::after{background:linear-gradient(90deg,currentColor,transparent)}
+.rule i{font-style:normal;font-size:11px;letter-spacing:.3em;text-indent:.3em}
+.types{font-family:var(--serif);font-size:13.5px;line-height:2.1;letter-spacing:.12em;color:var(--ink-mute)}
+.hero .btn-primary{margin-top:30px}
+
+.card{
+  position:relative;background:var(--paper-2);
+  border:1px solid var(--line);border-radius:6px;
+  padding:26px 22px;
+  box-shadow:0 22px 44px -32px rgba(29,26,22,.5);
+}
+.card-frame::before{
+  content:"";position:absolute;inset:7px;border:1px solid rgba(176,138,62,.3);
+  border-radius:3px;pointer-events:none;
+}
+.intro{margin-top:26px;text-align:left}
+.intro p{font-size:13.5px;line-height:2;color:var(--ink-soft)}
+.intro p + p{margin-top:8px}
+.intro b{color:var(--cinnabar);font-weight:600}
+
+/* ============ 按钮 ============ */
+.btn{
+  display:block;width:100%;padding:16px 18px;border-radius:4px;
+  font-family:var(--serif);font-size:16px;letter-spacing:.34em;text-indent:.34em;
+  transition:transform .22s cubic-bezier(.22,1,.36,1),box-shadow .22s,background .22s,color .22s;
+}
+.btn:active{transform:translateY(1px) scale(.995)}
+.btn-primary{
+  color:#fdf8ee;background:linear-gradient(135deg,var(--cinnabar) 0%,var(--cinnabar-deep) 100%);
+  box-shadow:0 14px 26px -16px rgba(140,42,33,.9);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 18px 30px -16px rgba(140,42,33,.95)}
+.btn-ghost{
+  color:var(--cinnabar);border:1px solid rgba(178,58,46,.45);background:rgba(178,58,46,.03);
+  letter-spacing:.24em;text-indent:.24em;font-size:14.5px;
+}
+.btn-ghost:hover{background:rgba(178,58,46,.07);transform:translateY(-2px)}
+.tiny{font-size:11.5px;line-height:1.8;color:var(--ink-mute);letter-spacing:.04em}
+.center{text-align:center}
+
+/* ============ 答题页 ============ */
+.quiz-head{
+  display:flex;justify-content:space-between;align-items:baseline;
+  font-size:12px;letter-spacing:.16em;color:var(--ink-mute);margin:6px 0 10px;
+}
+.q-index{font-family:var(--serif);color:var(--gold);letter-spacing:.2em}
+.track{height:6px;border-radius:99px;background:rgba(29,26,22,.08);overflow:hidden}
+.fill{
+  height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,var(--cinnabar) 0%,var(--gold) 100%);
+  transition:width .5s cubic-bezier(.22,1,.36,1);
+}
+.q-text{
+  font-family:var(--serif);font-weight:600;font-size:clamp(21px,5.2vw,25px);
+  line-height:1.62;letter-spacing:.03em;margin:30px 0 24px;min-height:2.2em;
+}
+.opts{display:grid;gap:12px}
+.opt{
+  display:flex;align-items:flex-start;gap:14px;width:100%;text-align:left;
+  padding:16px 16px;background:#fdfaf4;border:1px solid var(--line);border-radius:4px;
+  font-size:15px;line-height:1.7;color:var(--ink-soft);
+  transition:transform .2s,border-color .2s,background .2s,box-shadow .2s;
+  animation:optIn .5s cubic-bezier(.22,1,.36,1) both;
+}
+.opt:nth-child(1){animation-delay:.02s}
+.opt:nth-child(2){animation-delay:.07s}
+.opt:nth-child(3){animation-delay:.12s}
+.opt:nth-child(4){animation-delay:.17s}
+@keyframes optIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.opt:hover{border-color:var(--cinnabar);transform:translateX(4px);box-shadow:0 10px 20px -16px rgba(178,58,46,.85)}
+.opt .tag{
+  flex:0 0 auto;width:27px;height:27px;border-radius:50%;
+  display:grid;place-items:center;margin-top:1px;
+  border:1px solid var(--line-strong);color:var(--ink-mute);
+  font-family:var(--serif);font-size:13px;
+  transition:background .2s,color .2s,border-color .2s;
+}
+.opt:hover .tag{border-color:var(--cinnabar);color:var(--cinnabar)}
+.opt.picked{border-color:var(--cinnabar);background:rgba(178,58,46,.055)}
+.opt.picked .tag{background:var(--cinnabar);border-color:var(--cinnabar);color:#fff}
+.opt[disabled]{pointer-events:none}
+.quiz-foot{display:flex;justify-content:space-between;align-items:center;margin-top:22px;min-height:24px}
+.link-btn{font-size:12.5px;letter-spacing:.12em;color:var(--ink-mute);padding:6px 0;transition:color .2s}
+.link-btn:hover{color:var(--cinnabar)}
+.link-btn[disabled]{opacity:.32;pointer-events:none}
+
+/* ============ 结果页 ============ */
+.result-hero{text-align:center;padding:14px 0 6px;animation:pageIn .6s .05s both}
+.big-seal{
+  position:relative;width:96px;height:96px;margin:0 auto 22px;
+  display:grid;place-items:center;border:3px solid var(--cinnabar);border-radius:6px;
+  color:var(--cinnabar);font-family:var(--serif);font-size:50px;line-height:1;
+  background:rgba(178,58,46,.035);transform:rotate(-3.5deg);
+}
+.big-seal::after{
+  content:"";position:absolute;inset:5px;border:1px solid rgba(178,58,46,.5);border-radius:3px;
+}
+.eyebrow{font-family:var(--serif);font-size:12px;letter-spacing:.44em;text-indent:.44em;color:var(--gold)}
+.type-name{
+  font-family:var(--serif);font-weight:600;font-size:clamp(36px,9vw,46px);
+  letter-spacing:.16em;text-indent:.16em;margin:12px 0 14px;color:var(--ink);
+}
+.tagline{
+  font-family:var(--serif);font-size:15px;line-height:1.9;letter-spacing:.05em;
+  color:var(--cinnabar);padding:0 6px;
+}
+.stars{margin-top:16px;font-size:15px;letter-spacing:.18em;color:var(--gold)}
+.stars span{font-family:var(--sans);font-size:11.5px;letter-spacing:.08em;color:var(--ink-mute);margin-left:8px}
+
+.result-card{margin-top:26px;animation:pageIn .65s .12s both}
+h3.sec{
+  display:flex;align-items:center;gap:9px;margin:26px 0 13px;
+  font-family:var(--serif);font-size:15px;font-weight:600;letter-spacing:.18em;color:var(--ink);
+}
+h3.sec:first-child{margin-top:2px}
+h3.sec::before{content:"";width:3px;height:15px;border-radius:1px;background:var(--cinnabar)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{
+  padding:8px 13px;border:1px solid rgba(176,138,62,.42);border-radius:2px;
+  background:rgba(176,138,62,.06);color:var(--ink-soft);
+  font-size:13px;letter-spacing:.05em;
+}
+.traits{list-style:none}
+.traits li{
+  position:relative;padding-left:17px;font-size:14px;line-height:1.85;
+  color:var(--ink-soft);margin-bottom:7px;
+}
+.traits li::before{
+  content:"";position:absolute;left:1px;top:.78em;width:5px;height:5px;
+  background:var(--gold);transform:rotate(45deg);
+}
+.body-text{font-size:14px;line-height:2;color:var(--ink-soft);letter-spacing:.01em}
+.dims{display:grid;gap:10px;margin-top:2px}
+.dim{display:grid;grid-template-columns:56px 1fr 40px;align-items:center;gap:10px;font-size:12.5px;color:var(--ink-mute)}
+.dim .bar{height:7px;border-radius:99px;background:rgba(29,26,22,.07);overflow:hidden}
+.dim .bar i{
+  display:block;height:100%;width:0;border-radius:99px;
+  background:linear-gradient(90deg,rgba(79,111,99,.5),rgba(79,111,99,.92));
+  transition:width 1s cubic-bezier(.22,1,.36,1);
+}
+.dim .num{text-align:right;font-variant-numeric:tabular-nums;letter-spacing:.04em}
+.dim.top{color:var(--cinnabar)}
+.dim.top .bar i{background:linear-gradient(90deg,var(--cinnabar),var(--gold))}
+.egg{
+  margin-top:24px;padding:17px 16px;border:1px dashed rgba(176,138,62,.6);border-radius:4px;
+  background:rgba(176,138,62,.055);font-size:13.5px;line-height:1.9;color:var(--ink-soft);
+}
+.egg b{
+  display:block;font-family:var(--serif);font-size:11.5px;font-weight:600;
+  letter-spacing:.3em;color:var(--gold);margin-bottom:7px;
+}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:24px}
+.result-foot{margin-top:16px}
+
+/* ============ 响应式 ============ */
+@media (min-width:620px){
+  .app{padding-top:38px}
+  .card{padding:32px 30px}
+}
+@media (max-width:360px){
+  .app{padding-left:14px;padding-right:14px}
+  .actions{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s !important;animation-delay:0s !important;transition-duration:.001s !important}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="brand">
+    <div class="seal">职</div>
+    <div>
+      <b>职业底色测试</b>
+      <span>二十题 · 三分钟 · 一份答案</span>
+    </div>
+  </header>
+
+  <!-- 首页 -->
+  <section class="page active" id="page-home">
+    <div class="vertical-mark">知己知彼</div>
+    <div class="hero">
+      <div class="kicker">知己 · 知彼</div>
+      <h1>测测你最适合<br>什么<em>职业</em></h1>
+      <p class="lead">不问你想做什么，只看你平时怎么活。<br>二十道生活题，照出你的职业底色。</p>
+
+      <div class="rule"><i>八 种 底 色</i></div>
+      <p class="types">造梦师 · 解谜者 · 掌舵者 · 连接者<br>匠心者 · 守护者 · 表达者 · 探索者</p>
+
+      <button class="btn btn-primary" id="btn-start">开 始 测 试</button>
+      <p class="tiny" style="margin-top:18px">趣味测试，不是职业测评，也不构成任何专业建议</p>
+    </div>
+
+    <div class="card intro">
+      <p><b>怎么测：</b>一共 20 道单选题，全部来自日常习惯、处事方式、社交模式、情绪反应和兴趣偏好。凭第一反应选，别想太久。</p>
+      <p><b>怎么算：</b>每个选项悄悄对应一种职业底色，选完自动汇总，得分最高的那一种就是你的结果。</p>
+    </div>
+  </section>
+
+  <!-- 答题页 -->
+  <section class="page" id="page-quiz">
+    <div class="quiz-head">
+      <span class="q-index" id="q-counter">第一题</span>
+      <span id="q-pct">0%</span>
+    </div>
+    <div class="track"><div class="fill" id="fill"></div></div>
+    <h2 class="q-text" id="q-text"></h2>
+    <div class="opts" id="opts"></div>
+    <div class="quiz-foot">
+      <button class="link-btn" id="btn-back" disabled>← 上一题</button>
+      <span class="tiny" id="q-hint">选一个最像你的</span>
+    </div>
+  </section>
+
+  <!-- 结果页 -->
+  <section class="page" id="page-result">
+    <div id="result-body"></div>
+  </section>
+</div>
+
+<script>
+/* =========================================================
+   数据层
+   ========================================================= */
+var DIMS = [
+  { name:'造梦师', char:'梦', color:'#b23a2e' },
+  { name:'解谜者', char:'谜', color:'#2b3a55' },
+  { name:'掌舵者', char:'舵', color:'#8c2a21' },
+  { name:'连接者', char:'桥', color:'#4f6f63' },
+  { name:'匠心者', char:'匠', color:'#7a5c2e' },
+  { name:'守护者', char:'守', color:'#5b6f52' },
+  { name:'表达者', char:'光', color:'#a8552b' },
+  { name:'探索者', char:'远', color:'#3d5a6c' }
+];
+
+/* 每题 4 个选项，[选项文案, 对应维度下标]
+   维度分配经过配平：8 种底色各出现 10 次，总机会完全相等 */
+var QUESTIONS = [
+  { q:'周末早上自然醒，你最可能先做什么？', opts:[
+    ['翻出收藏的灵感图和画册，边看边涂两笔',0],
+    ['琢磨一个一直没搞懂的问题，不弄明白不舒服',1],
+    ['把这一周要办的事列成清单，排好先后',2],
+    ['给朋友发消息，约人今天出来见面',3]
+  ]},
+  { q:'朋友搬家喊你帮忙，你最可能是哪种角色？', opts:[
+    ['研究说明书，负责拆装家具和电器',4],
+    ['提前问一句：要不要帮忙照看猫、带点吃的',5],
+    ['一边搬一边讲段子，负责让全场不冷场',6],
+    ['搬完顺手把新小区周边逛一遍，看看有什么好店',7]
+  ]},
+  { q:'衣柜里翻出一件很久没穿的旧衣服，你会？', opts:[
+    ['动手改一改，变成一件没见过的样子',0],
+    ['三秒判断留还是扔，绝不拖到明天',2],
+    ['拆开看版型，想着照着做一件更合身的',4],
+    ['穿上它，找面白墙拍一组有意思的照片',6]
+  ]},
+  { q:'深夜突然有点低落，你的第一反应更接近？', opts:[
+    ['先理清楚：到底是哪件事让我不舒服',1],
+    ['找个信得过的人，把话说出来',3],
+    ['惦记着明天答应别人的事，提醒自己别耽误',5],
+    ['出门走走，吹吹风看看夜景再说',7]
+  ]},
+  { q:'看一部纪录片，最吸引你的是什么？', opts:[
+    ['画面构图和配色，好看就想截图',0],
+    ['里面的数据和因果逻辑，对不对得上',1],
+    ['手艺人操作的过程，每个步骤都想看清',4],
+    ['人物之间的情感，谁和谁之间发生了什么',5]
+  ]},
+  { q:'一群人出去旅行，你通常是那一个？', opts:[
+    ['做攻略、订行程、把时间掐准的人',2],
+    ['照顾大家情绪、协调不同意见的人',3],
+    ['气氛担当，顺便负责拍照凹造型',6],
+    ['临时起意，带大家拐进小众巷子的人',7]
+  ]},
+  { q:'收到哪种礼物，你会真的开心很久？', opts:[
+    ['一本设计感很强的画册或手账',0],
+    ['朋友手写的一封长信',3],
+    ['一件贴心实用的生活小物',5],
+    ['一张去陌生城市的车票',7]
+  ]},
+  { q:'遇到一件完全不会做的事，你的第一反应？', opts:[
+    ['查资料看教程，先把原理搞懂',1],
+    ['直接找会的人问，快速解决掉',2],
+    ['自己上手试，在试错里学会',4],
+    ['边做边吐槽，把过程讲给别人听',6]
+  ]},
+  { q:'打开你的手机相册，占比最高的是？', opts:[
+    ['配色好看、构图好看的截图',0],
+    ['学习笔记、资料截图',1],
+    ['待办清单、会议记录、各种截图存档',2],
+    ['和朋友在一起的合照、聊天记录',3]
+  ]},
+  { q:'一个不短的假期，你会怎么安排？', opts:[
+    ['报个手工课或烹饪课，做出成品',4],
+    ['回家陪家人，给他们好好做顿饭',5],
+    ['去 livehouse、音乐节或者剧场',6],
+    ['说走就走，去一个没去过的地方',7]
+  ]},
+  { q:'做菜做到一半发现太咸了，你会？', opts:[
+    ['加点别的食材重新搭配，变成一道新菜',0],
+    ['当场定个标准：以后就按这个量放',2],
+    ['尝一遍记住咸度，下次凭手感调整',4],
+    ['边吃边吐槽，顺手发个朋友圈',6]
+  ]},
+  { q:'朋友跟你吐槽工作，你通常会？', opts:[
+    ['帮他理清楚，问题到底卡在哪一步',1],
+    ['先接住情绪，让他把话说完',3],
+    ['默默记下来，过几天再问一句"后来呢"',5],
+    ['建议他请个假，出去走走换换气',7]
+  ]},
+  { q:'你最欣赏别人身上哪一种特质？', opts:[
+    ['审美在线，做事有自己的风格',0],
+    ['逻辑清晰，说话有理有据',1],
+    ['手很巧，什么东西都能修好',4],
+    ['温柔可靠，记得住别人的小习惯',5]
+  ]},
+  { q:'一群人讨论卡住了，你通常会？', opts:[
+    ['拍板定个方向，先推进再说',2],
+    ['提醒一句：先听听每个人怎么想',3],
+    ['讲个笑话把气氛松一松，再绕回正题',6],
+    ['提议换个地方走走，回来再说',7]
+  ]},
+  { q:'下面哪种情况，最让你难受？', opts:[
+    ['日子一成不变，身边的东西一个比一个丑',0],
+    ['遇到问题，却怎么都找不到答案',1],
+    ['计划全被打乱，事情脱离掌控',2],
+    ['和身边的人产生了误会',3]
+  ]},
+  { q:'你更享受下面哪一种时刻？', opts:[
+    ['一个人安安静静，做完一件精细的活',4],
+    ['被人需要、真的帮上忙的那一瞬间',5],
+    ['站在人前，被所有目光看着',6],
+    ['刚踏进陌生环境、心里一紧的那一下',7]
+  ]},
+  { q:'如果只能选一条，挑工作时你最看重？', opts:[
+    ['能不能做出好看、有创意的东西',0],
+    ['有没有成长空间，能不能一直学到东西',1],
+    ['有没有上升通道，能不能说了算',2],
+    ['同事好不好相处，氛围暖不温暖',3]
+  ]},
+  { q:'你理想中的工作场所长什么样？', opts:[
+    ['有一整面工具墙，随时能上手操作的工作台',4],
+    ['有绿植、有热茶，大家互相照应',5],
+    ['有舞台、有灯光，能被看见',6],
+    ['没有固定办公室，人一直在路上',7]
+  ]},
+  { q:'朋友给你贴的标签，最可能是哪一个？', opts:[
+    ['审美怪、点子王',0],
+    ['行走的百科、逻辑鬼才',1],
+    ['手工达人、修理小能手',4],
+    ['靠谱老好人、暖心担当',5]
+  ]},
+  { q:'如果人生是一本小说，你想当哪一个？', opts:[
+    ['决定故事走向的那位作者',2],
+    ['把所有人串在一起的温暖角色',3],
+    ['站在聚光灯下的主角',6],
+    ['永远在出发的冒险者',7]
+  ]}
+];
+
+var RESULTS = [
+  {
+    name:'造梦师', char:'梦',
+    tagline:'别人看到的是墙，你看到的是画布。',
+    careers:['广告创意','插画师','游戏策划','空间设计师'],
+    traits:[
+      '脑子里永远有画面，说不清的事会自动变成图像',
+      '对颜色、字体、留白极其敏感，丑的东西会让你浑身难受',
+      '受不了"差不多就行"，会忍不住动手改到满意'
+    ],
+    reason:'你习惯把抽象的情绪变成看得见的东西。别人需要解释半天的感受，你一张图就能说明白。创意类工作从来不是"想出来"的，是"看见"的——而你天生就能看见别人看不见的部分。',
+    strengths:[
+      '审美即效率：你能一眼判断什么值得做，少走很多弯路',
+      '跨界联想能力强，能把毫不相干的两件事拼成新方案'
+    ],
+    egg:'你手机相册里的截图，八成都是"以后用得上"的配色和版式。'
+  },
+  {
+    name:'解谜者', char:'谜',
+    tagline:'世界是一堆待解的谜面，你负责交答案。',
+    careers:['数据分析师','外科医生','科研工作者','算法工程师'],
+    traits:[
+      '不弄明白就睡不着，"为什么"是你的口头禅',
+      '对含糊的说法本能地想验证，不太信"大家都这么说"',
+      '比起结论，你更在意推导过程有没有漏洞'
+    ],
+    reason:'你享受的是"从混沌到清晰"的那一下。分析和研究类工作给你的不是稳定感，是持续的解谜快感——每拆掉一个问号，你就多一分底气。',
+    strengths:[
+      '抗噪音能力强，能在信息堆里一把抓住主线',
+      '结论可靠，时间久了别人自然愿意信你的判断'
+    ],
+    egg:'你的浏览记录里，一定有一条"随手点进去，两小时后才出来"的页面。'
+  },
+  {
+    name:'掌舵者', char:'舵',
+    tagline:'风向不对时，你选择造一艘船。',
+    careers:['创业者','项目经理','律师','产品总监'],
+    traits:[
+      '天生会做决定，纠结对你来说比选错更消耗',
+      '受不了没完没了的讨论，想尽快落到执行',
+      '对"这件事谁负责"很敏感，愿意自己扛'
+    ],
+    reason:'你能把模糊的目标拆成可执行的步骤，也能在信息不全的时候敢拍板。管理、创业、法律这类需要担责的位置，会让你越干越上头——压力对你更像燃料。',
+    strengths:[
+      '抗压能力强，越乱越冷静',
+      '能容忍不完美的决定，先推进再优化，不内耗'
+    ],
+    egg:'你的备忘录里，至少躺着三个"要是我就这么干"的商业点子。'
+  },
+  {
+    name:'连接者', char:'桥',
+    tagline:'你一开口，房间里就有人愿意卸下盔甲。',
+    careers:['心理咨询师','教师','人力资源','社区工作者'],
+    traits:[
+      '很快能感觉到别人的情绪，哪怕对方什么都没说',
+      '说话让人放松，是朋友圈里公认的"好聊"',
+      '习惯当那个调和的人，见不得场面僵住'
+    ],
+    reason:'你天生会"读空气"，也愿意接住别人的情绪。教育、心理、人力、社区这类工作，说到底都是把人对上——而这恰好是你不费力就能做好的事。',
+    strengths:[
+      '信任建立得快，别人愿意跟你说真话',
+      '你是团队里的黏合剂，能省下大量内耗'
+    ],
+    egg:'朋友吵架，最后总有人来找你评理——而你会先问一句"你现在什么感觉"。'
+  },
+  {
+    name:'匠心者', char:'匠',
+    tagline:'你相信，好的东西都是磨出来的。',
+    careers:['机械工程师','厨师','服装制版师','珠宝设计师'],
+    traits:[
+      '喜欢动手，看到实实在在的成品才有成就感',
+      '对细节和手感有执念，差一毫米都别扭',
+      '宁愿慢一点，也要做对'
+    ],
+    reason:'你享受"手上功夫"带来的确定感。工程、手作、烹饪、制版这类工作，反馈真实、可以积累——今天的经验和明天的手艺是连着的，这让你安心。',
+    strengths:[
+      '耐心是你的超能力，坐得住、磨得起',
+      '你能把"差不多"逼成"刚刚好"，这是很稀缺的能力'
+    ],
+    egg:'你修好过的东西，大概比你说过的情话还多。'
+  },
+  {
+    name:'守护者', char:'守',
+    tagline:'你不在聚光灯下，但你在所有人回头的地方。',
+    careers:['护士','兽医','幼儿教师','公益项目官员'],
+    traits:[
+      '很难对别人的难处视而不见，看见了就得管',
+      '记得住别人的小习惯，包括那句随口说的"我不吃香菜"',
+      '答应的事一定做到，不然会一直惦记'
+    ],
+    reason:'你的价值感来自"被需要"。医疗、教育、公益、动物相关的工作会让你累，但那种"因为我在，事情变好了"的回馈，是别的职业给不了的。',
+    strengths:[
+      '情绪稳定，是混乱现场里的定海神针',
+      '长期关系维护能力强，人脉是熬出来的真交情'
+    ],
+    egg:'你的微信里，有个分组叫"要记得问的人"。'
+  },
+  {
+    name:'表达者', char:'光',
+    tagline:'你一站上去，空气就开始有情绪。',
+    careers:['演员','歌手','主持人','脱口秀编剧'],
+    traits:[
+      '有表现欲，也很会抓节奏，知道什么时候该停顿',
+      '情绪来的时候特别有感染力，别人会被你带着走',
+      '受不了平淡的表达，同样的话你会想说得更好玩'
+    ],
+    reason:'你需要"被看见"才能满血。表演、内容、舞台类工作，是把你的敏感变成作品的地方——那些平时觉得"想太多"的部分，在台上恰好是天赋。',
+    strengths:[
+      '共情加表达，你特别能打动人',
+      '临场反应快，越到大场面越稳'
+    ],
+    egg:'你一个人的时候，会对着镜子把白天没说爽的话再演一遍。'
+  },
+  {
+    name:'探索者', char:'远',
+    tagline:'地图的尽头，才是你的起点。',
+    careers:['旅行摄影师','户外领队','纪录片导演','旅行博主'],
+    traits:[
+      '在一个地方待久了就想跑，熟悉感会让你发闷',
+      '对陌生环境的兴奋大于害怕',
+      '收集体验像收集邮票，总想再添一张'
+    ],
+    reason:'你靠"新鲜感"供能。旅行、拍摄、户外、纪实类工作，把你的不安分变成了生产力——别人觉得折腾的事，你做起来刚好合适。',
+    strengths:[
+      '适应力极强，换个城市三天就能活明白',
+      '见得多，判断往往更接地气'
+    ],
+    egg:'你的收藏夹里全是"下次一定去"，而你还真去过不少。'
+  }
+];
+
+/* =========================================================
+   状态与 DOM
+   ========================================================= */
+var TAGS = ['甲','乙','丙','丁'];
+var answers = [];        // answers[i] = 第 i 题选中的维度下标，null 表示未答
+var current = 0;
+var locked = false;
+var TOTAL = QUESTIONS.length;
+
+var pageHome   = document.getElementById('page-home');
+var pageQuiz   = document.getElementById('page-quiz');
+var pageResult = document.getElementById('page-result');
+var elCounter  = document.getElementById('q-counter');
+var elPct      = document.getElementById('q-pct');
+var elFill     = document.getElementById('fill');
+var elQText    = document.getElementById('q-text');
+var elOpts     = document.getElementById('opts');
+var elBack     = document.getElementById('btn-back');
+var elHint     = document.getElementById('q-hint');
+var resultBody = document.getElementById('result-body');
+
+/* =========================================================
+   工具函数
+   ========================================================= */
+function showPage(target){
+  [pageHome, pageQuiz, pageResult].forEach(function(p){
+    p.classList.toggle('active', p === target);
+  });
+  window.scrollTo({ top:0, behavior:'auto' });
+}
+
+function resetState(){
+  answers = new Array(TOTAL).fill(null);
+  current = 0;
+  locked = false;
+}
+
+/* =========================================================
+   答题页渲染
+   ========================================================= */
+function renderQuestion(){
+  var item = QUESTIONS[current];
+  var answeredCount = answers.filter(function(a){ return a !== null; }).length;
+  var picked = answers[current];
+
+  elCounter.textContent = '第 ' + (current + 1) + ' / ' + TOTAL + ' 题';
+  elPct.textContent = Math.round(answeredCount / TOTAL * 100) + '%';
+  elFill.style.width = (answeredCount / TOTAL * 100) + '%';
+  elQText.textContent = item.q;
+  elHint.textContent = current === TOTAL - 1 ? '最后一题，选完出结果' : '选一个最像你的';
+
+  var html = '';
+  item.opts.forEach(function(opt, i){
+    var isPicked = picked === i;
+    html += '<button type="button" class="opt' + (isPicked ? ' picked' : '') + '" data-index="' + i + '">' +
+              '<span class="tag">' + TAGS[i] + '</span>' +
+              '<span>' + opt[0] + '</span>' +
+            '</button>';
+  });
+  elOpts.innerHTML = html;
+
+  elBack.disabled = current === 0;
+  locked = false;
+}
+
+function selectOption(index){
+  if (locked) return;
+  locked = true;
+
+  answers[current] = index;
+
+  var btns = elOpts.querySelectorAll('.opt');
+  for (var i = 0; i < btns.length; i++){
+    btns[i].classList.toggle('picked', i === index);
+    btns[i].setAttribute('disabled', 'disabled');
+  }
+
+  var answeredCount = answers.filter(function(a){ return a !== null; }).length;
+  elPct.textContent = Math.round(answeredCount / TOTAL * 100) + '%';
+  elFill.style.width = (answeredCount / TOTAL * 100) + '%';
+
+  window.setTimeout(function(){
+    if (current < TOTAL - 1){
+      current += 1;
+      renderQuestion();
+    } else {
+      showResult();
+    }
+  }, 300);
+}
+
+function goBack(){
+  if (current === 0) return;
+  current -= 1;
+  renderQuestion();
+}
+
+/* =========================================================
+   评分与结果
+   ========================================================= */
+function computeScores(){
+  var scores = new Array(DIMS.length).fill(0);
+  var lastSeen = {};
+  answers.forEach(function(dimIndex, qi){
+    if (dimIndex === null) return;
+    scores[dimIndex] += 1;
+    lastSeen[dimIndex] = qi;   // 记录最后一次出现的位置，用于同分时打破平局
+  });
+  return { scores:scores, lastSeen:lastSeen };
+}
+
+function resolveBest(scores, lastSeen){
+  var max = Math.max.apply(null, scores);
+  var cands = [];
+  scores.forEach(function(s, i){ if (s === max) cands.push(i); });
+
+  cands.sort(function(a, b){
+    var la = (typeof lastSeen[a] === 'number') ? lastSeen[a] : -1;
+    var lb = (typeof lastSeen[b] === 'number') ? lastSeen[b] : -1;
+    if (lb !== la) return lb - la;   // 同分时，取最近一次选择倾向
+    return a - b;
+  });
+  return { index:cands[0], score:max };
+}
+
+function starText(score){
+  if (score >= 6) return '★★★★★';
+  if (score === 5) return '★★★★☆';
+  if (score === 4) return '★★★☆☆';
+  if (score === 3) return '★★★☆☆';
+  return '★★☆☆☆';
+}
+
+function esc(str){
+  return String(str).replace(/[&<>"]/g, function(c){
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c];
+  });
+}
+
+function showResult(){
+  var data = computeScores();
+  var best = resolveBest(data.scores, data.lastSeen);
+  var idx = best.index;
+  var res = RESULTS[idx];
+  var maxScore = best.score || 1;
+
+  var chips = res.careers.map(function(c){
+    return '<span class="chip">' + esc(c) + '</span>';
+  }).join('');
+
+  var traits = res.traits.map(function(t){
+    return '<li>' + esc(t) + '</li>';
+  }).join('');
+
+  var strengths = res.strengths.map(function(s){
+    return '<li>' + esc(s) + '</li>';
+  }).join('');
+
+  var dimsHtml = '';
+  data.scores.forEach(function(s, i){
+    var pct = Math.round(s / maxScore * 100);
+    dimsHtml += '<div class="dim' + (i === idx ? ' top' : '') + '">' +
+                  '<span>' + esc(DIMS[i].name) + '</span>' +
+                  '<span class="bar"><i data-w="' + pct + '"></i></span>' +
+                  '<span class="num">' + s + ' 题</span>' +
+                '</div>';
+  });
+
+  resultBody.innerHTML =
+    '<div class="result-hero">' +
+      '<div class="big-seal">' + res.char + '</div>' +
+      '<div class="eyebrow">你 的 职 业 底 色</div>' +
+      '<h2 class="type-name">' + esc(res.name) + '</h2>' +
+      '<p class="tagline">「' + esc(res.tagline) + '」</p>' +
+      '<p class="stars">' + starText(best.score) + '<span>20 题里有 ' + best.score + ' 次走到这里</span></p>' +
+    '</div>' +
+
+    '<div class="card card-frame result-card">' +
+      '<h3 class="sec">适 配 职 业</h3>' +
+      '<div class="chips">' + chips + '</div>' +
+
+      '<h3 class="sec">性 格 底 色</h3>' +
+      '<ul class="traits">' + traits + '</ul>' +
+
+      '<h3 class="sec">为 什 么 是 你</h3>' +
+      '<p class="body-text">' + esc(res.reason) + '</p>' +
+
+      '<h3 class="sec">隐 藏 优 势</h3>' +
+      '<ul class="traits">' + strengths + '</ul>' +
+
+      '<h3 class="sec">八 种 底 色 倾 向</h3>' +
+      '<div class="dims">' + dimsHtml + '</div>' +
+
+      '<div class="egg"><b>彩 蛋</b>' + esc(res.egg) + '</div>' +
+    '</div>' +
+
+    '<div class="actions">' +
+      '<button class="btn btn-primary" id="btn-retest">再 测 一 次</button>' +
+      '<button class="btn btn-ghost" id="btn-copy">复制结果文案</button>' +
+    '</div>' +
+    '<p class="tiny center result-foot">长按或截图保存这一页，分享到小红书和朋友圈吧</p>';
+
+  showPage(pageResult);
+
+  // 进度条延迟触发，保证动画从 0 展开
+  window.setTimeout(function(){
+    resultBody.querySelectorAll('.bar i').forEach(function(bar){
+      bar.style.width = bar.getAttribute('data-w') + '%';
+    });
+  }, 120);
+
+  document.getElementById('btn-retest').addEventListener('click', function(){
+    resetState();
+    renderQuestion();
+    showPage(pageQuiz);
+  });
+
+  document.getElementById('btn-copy').addEventListener('click', function(){
+    var text = '我在「测测你最适合什么职业」里的职业底色是：' + res.name + '\n' +
+               '「' + res.tagline + '」\n' +
+               '适配职业：' + res.careers.join(' / ');
+    copyText(text, this);
+  });
+}
+
+function copyText(text, btn){
+  function done(){
+    var old = btn.textContent;
+    btn.textContent = '已复制 ✓';
+    window.setTimeout(function(){ btn.textContent = old; }, 1600);
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(function(){ fallbackCopy(text, done); });
+  } else {
+    fallbackCopy(text, done);
+  }
+}
+
+function fallbackCopy(text, done){
+  try{
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly', 'readonly');
+    ta.style.position = 'fixed';
+    ta.style.top = '-1000px';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    done();
+  }catch(e){
+    window.alert('复制失败，请长按页面手动复制');
+  }
+}
+
+/* =========================================================
+   事件绑定
+   ========================================================= */
+document.getElementById('btn-start').addEventListener('click', function(){
+  resetState();
+  renderQuestion();
+  showPage(pageQuiz);
+});
+
+elOpts.addEventListener('click', function(e){
+  var btn = e.target.closest ? e.target.closest('.opt') : null;
+  if (!btn) return;
+  var index = parseInt(btn.getAttribute('data-index'), 10);
+  if (!isNaN(index)) selectOption(index);
+});
+
+elBack.addEventListener('click', goBack);
+
+document.addEventListener('keydown', function(e){
+  if (!pageQuiz.classList.contains('active')) return;
+
+  if (e.key === 'ArrowLeft' || e.key === 'Backspace'){
+    e.preventDefault();
+    goBack();
+    return;
+  }
+  if (e.key >= '1' && e.key <= '4'){
+    var index = parseInt(e.key, 10) - 1;
+    if (index < QUESTIONS[current].opts.length) selectOption(index);
+  }
+});
+</script>
+</body>
+</html>
